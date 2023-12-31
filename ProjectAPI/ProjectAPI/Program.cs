@@ -1,10 +1,15 @@
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using ProjectAPI.Controllers;
+using ProjectAPI.services.WeatherForecast.Create;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-//addcors
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", builder =>
@@ -16,7 +21,13 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+//configure autofac
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(container =>
+{
+    container.RegisterType<WeatherForecastController>().PropertiesAutowired();
+    container.RegisterType<CreateWeatherForecast>().As<ICreateWeatherForecast>().PropertiesAutowired();
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
