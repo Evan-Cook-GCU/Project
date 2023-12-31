@@ -1,0 +1,8 @@
+# Angular
+/node_modules
+/dist
+
+# C#
+/bin
+/obj
+/.vscode
