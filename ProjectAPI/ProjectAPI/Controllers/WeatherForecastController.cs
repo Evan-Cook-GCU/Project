@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ProjectAPI.services.WeatherForecast.Create;
 
 namespace ProjectAPI.Controllers
 {
@@ -12,10 +13,12 @@ namespace ProjectAPI.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ICreateWeatherForecast _createWeatherForecast;
         //create a list of weather forecasts
-        private static List<WeatherForecast> _forecasts = new List<WeatherForecast>();  
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public static List<WeatherForecast> _forecasts = new List<WeatherForecast>();  
+        public WeatherForecastController(ILogger<WeatherForecastController> logger,ICreateWeatherForecast create)
         {
+            _createWeatherForecast = create;
             _logger = logger;
         }
 
@@ -28,6 +31,10 @@ namespace ProjectAPI.Controllers
         [HttpGet("{id}")]
         public WeatherForecast Get(int id)
         {
+            if(1!=_createWeatherForecast.Invoke(new WeatherForecast()))
+            {
+                Console.WriteLine("Error");
+            }
             try
             {
                 if (_forecasts[id] != null)

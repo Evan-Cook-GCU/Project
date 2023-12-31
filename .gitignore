@@ -6,3 +6,8 @@
 /bin
 /obj
 /.vscode
+*.vsidx
+/ProjectAPI/ProjectAPI/.vs/ProjectAPI/FileContentIndex/7c5fa25a-aa87-4cd2-8445-8859f50a5bf9.vsidx
+/ProjectAPI/ProjectAPI/.vs/ProjectAPI/v17/.suo
+*.v2
+/ProjectAPI/ProjectAPI/bin
