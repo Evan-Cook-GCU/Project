@@ -1,6 +1,6 @@
-namespace ProjectAPI
+namespace ProjectAPI.Models
 {
-    public class WeatherForecast
+    public class WeatherForecast : IEntity
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
