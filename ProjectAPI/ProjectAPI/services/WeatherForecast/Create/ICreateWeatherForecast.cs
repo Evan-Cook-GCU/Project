@@ -2,6 +2,6 @@
 {
     public interface ICreateWeatherForecast
     {
-        int Invoke(ProjectAPI.WeatherForecast model);
+        int Invoke(Models.DomainModels.WeatherForecast model);
     }
 }

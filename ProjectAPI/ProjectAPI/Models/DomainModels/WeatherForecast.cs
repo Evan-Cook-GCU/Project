@@ -1,4 +1,4 @@
-namespace ProjectAPI
+namespace ProjectAPI.Models.DomainModels
 {
     public class WeatherForecast
     {

@@ -3,45 +3,61 @@ using Autofac.Extensions.DependencyInjection;
 using ProjectAPI.Controllers;
 using ProjectAPI.services.WeatherForecast.Create;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddControllers();
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-
-builder.Services.AddCors(options =>
+internal class Program
 {
-    options.AddPolicy("AllowAll", builder =>
+    private static WebApplicationBuilder WebBuilder;
+    private static void Main(string[] args)
     {
-        builder.AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
-    });
-});
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-//configure autofac
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-builder.Host.ConfigureContainer<ContainerBuilder>(container =>
-{
-    container.RegisterType<WeatherForecastController>().PropertiesAutowired();
-    container.RegisterType<CreateWeatherForecast>().As<ICreateWeatherForecast>().PropertiesAutowired();
-});
-var app = builder.Build();
+        WebBuilder = WebApplication.CreateBuilder(args);
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-    app.UseSwagger();
-    app.UseSwaggerUI();
+        // Add services to the container.
+        WebBuilder.Services.AddControllers();
+
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+        WebBuilder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+        });
+        WebBuilder.Services.AddEndpointsApiExplorer();
+        WebBuilder.Services.AddSwaggerGen();
+        ConfigureAutofac();
+        var app = WebBuilder.Build();
+
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+        app.UseCors("AllowAll");
+        app.UseHttpsRedirection();
+        app.UseRouting();
+        app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.Run();
+    }
+
+    private static void ConfigureAutofac()
+    {
+        //configure autofac
+        WebBuilder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+        WebBuilder.Host.ConfigureContainer<ContainerBuilder>(container =>
+        {
+            container.RegisterType<WeatherForecastController>().PropertiesAutowired();
+            container.RegisterType<CreateWeatherForecast>().As<ICreateWeatherForecast>().PropertiesAutowired();
+        });
+    }
+    private static void ConfigureDatabase(IServiceCollection services)
+    {
+        //services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+    }
 }
-app.UseCors("AllowAll");
-app.UseHttpsRedirection();
-app.UseRouting();
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();

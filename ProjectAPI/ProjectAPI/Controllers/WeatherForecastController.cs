@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ProjectAPI.Models.DomainModels;
 using ProjectAPI.services.WeatherForecast.Create;
 
 namespace ProjectAPI.Controllers
