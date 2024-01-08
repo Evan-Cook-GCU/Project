@@ -1,13 +1,48 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using ProjectAPI.Controllers;
+using ProjectAPI.Models.DomainModels;
 using ProjectAPI.services.WeatherForecast.Create;
+using System.Globalization;
 
 internal class Program
 {
     private static WebApplicationBuilder WebBuilder;
+    private static IConfiguration Configuration { get; set; }
+
+static void getUsers()
+    {
+        using var context= new ProjectContext();
+        var users = context.Users.ToList();
+        foreach (var user in users)
+        {
+            Console.WriteLine(user.Name);
+        }
+    }
+    static void addUsers()
+    {
+        using var context = new ProjectContext();
+        var user = new User();
+        context.Users.Add(user);
+        context.SaveChanges();
+    }
+
+
     private static void Main(string[] args)
     {
+        //get the configuration
+        var configuration = new ConfigurationBuilder();
+        configuration.AddJsonFile("appsettings.json");
+        var config = configuration.Build();
+        using(ProjectContext context = new ProjectContext())
+        {
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
+        }
+        getUsers();
+        addUsers();
+        getUsers();
         WebBuilder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
@@ -58,6 +93,6 @@ internal class Program
     }
     private static void ConfigureDatabase(IServiceCollection services)
     {
-        //services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+        services.AddDbContext<ProjectContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
     }
 }

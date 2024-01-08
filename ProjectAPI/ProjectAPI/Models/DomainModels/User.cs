@@ -11,5 +11,15 @@
 
         public List<Group> Groups { get; set; }
 
+        public User()
+        {
+            Groups = new List<Group>();
+            //populate all the properties with default values
+            Name = "test";
+            Password = "test";
+            Phone = "test";
+            PhoneNumber = "test";
+            Email = "test";
+        }
     }
 }
