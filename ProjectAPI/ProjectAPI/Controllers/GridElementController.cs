@@ -9,23 +9,23 @@ namespace ProjectAPI.Controllers
     [ApiController]
     public class GridElementController : ControllerBase
     {
-        private readonly List<GridElement> _gridElements;
+        private readonly List<GridElementModel> _gridElements;
 
         public GridElementController()
         {
-            _gridElements = new List<GridElement>();
+            _gridElements = new List<GridElementModel>();
         }
 
         // GET: api/GridElement
         [HttpGet]
-        public ActionResult<IEnumerable<GridElement>> GetGridElements()
+        public ActionResult<IEnumerable<GridElementModel>> GetGridElements()
         {
             return _gridElements;
         }
 
         // GET: api/GridElement/5
         [HttpGet("{id}")]
-        public ActionResult<GridElement> GetGridElement(int id)
+        public ActionResult<GridElementModel> GetGridElement(int id)
         {
             var gridElement = _gridElements.FirstOrDefault(g => g.Id == id);
 
@@ -39,14 +39,14 @@ namespace ProjectAPI.Controllers
 
         // POST: api/GridElement
         [HttpPost]
-        public void PostGridElement([FromBody] GridElement gridElement)
+        public void PostGridElement([FromBody] GridElementModel gridElement)
         {
             _gridElements.Add(gridElement);
         }
 
         // PUT: api/GridElement/5
         [HttpPut("{id}")]
-        public void PutGridElement(int id, [FromBody] GridElement gridElement)
+        public void PutGridElement(int id, [FromBody] GridElementModel gridElement)
         {
             var existingGridElement = _gridElements.FirstOrDefault(g => g.Id == id);
             if (existingGridElement != null)
@@ -56,7 +56,7 @@ namespace ProjectAPI.Controllers
                 existingGridElement.Y = gridElement.Y;
                 existingGridElement.Width = gridElement.Width;
                 existingGridElement.Height = gridElement.Height;
-                existingGridElement.GridId = gridElement.GridId;
+                existingGridElement.GridDomainModelId = gridElement.GridDomainModelId;
                 existingGridElement.Value = gridElement.Value;
                 existingGridElement.Type = gridElement.Type;
             }

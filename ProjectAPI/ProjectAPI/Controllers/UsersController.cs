@@ -9,61 +9,96 @@ namespace ProjectAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly List<User> _users;
+        private readonly List<UserModel> _users;
+        //private readonly IRepository<UserDomainModel> _repo;
 
-        public UsersController()
+        public UsersController(
+           // IRepository<UserDomainModel> repo
+            )
         {
-            _users = new List<User>();
+           // _repo = repo;
         }
 
         // GET: api/Users
         [HttpGet]
-        public ActionResult<IEnumerable<User>> GetUsers()
+        public ActionResult<IEnumerable<UserModel>> GetUsers()
         {
-            return _users;
+            using (var context = new ProjectContext())
+            {
+                var users = context.Users.ToList();
+                return Ok(users);
+            }
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public ActionResult<User> GetUser(int id)
+        public ActionResult<UserModel> GetUser(int id)
         {
-            var user = _users.FirstOrDefault(u => u.Id == id);
-
-            if (user == null)
+            using (var context = new ProjectContext())
             {
-                return NotFound();
-            }
-
-            return user;
+                var user = context.Users.FirstOrDefault(u => u.Id == id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                return Ok(user);
+            }   
+            
         }
-
+        // GET: api/Users/5
+        [HttpGet("{username}/{password}")]
+        public ActionResult<UserModel> GetUser(String username,
+            string password)
+        {
+            using (var context = new ProjectContext())
+            {
+                var user = context.Users.FirstOrDefault(u => u.Name == username
+                               && u.Password == password);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                return Ok(user);
+            }
+        }
         // POST: api/Users
         [HttpPost]
-        public void PostUser([FromBody] User user)
+        public void PostUser([FromBody] UserModel user)
         {
-            _users.Add(user);
+            using (var context = new ProjectContext())
+            {
+                context.Users.Add(user);
+                context.SaveChanges();
+            }
         }
 
         // PUT: api/Users/5
         [HttpPut("{id}")]
-        public void PutUser(int id, [FromBody] User user)
+        public void PutUser(int id, [FromBody] UserModel user)
         {
-            var existingUser = _users.FirstOrDefault(u => u.Id == id);
-            if (existingUser != null)
+           using (var context = new ProjectContext())
             {
-                existingUser.Name = user.Name;
-                existingUser.Email = user.Email;
-                existingUser.Password = user.Password;
-                existingUser.Groups = user.Groups;
-            }
+                var existingUser = context.Users.FirstOrDefault(u => u.Id == id);
+                if (existingUser != null)
+                {
+                    existingUser.Name = user.Name;
+                    existingUser.Password = user.Password;
+                    existingUser.Email = user.Email;
+                }
+                context.SaveChanges();
+            };
         }
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public void DeleteUser(int id)
         {
-            var user = _users.FirstOrDefault(u => u.Id == id);
-            _users.Remove(user);
+            using (var context = new ProjectContext())
+            {
+                var user = context.Users.FirstOrDefault(u => u.Id == id);
+                context.Users.Remove(user);
+                context.SaveChanges();
+            }
         }
     }
 }

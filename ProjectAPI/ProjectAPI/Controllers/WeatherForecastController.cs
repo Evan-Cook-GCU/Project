@@ -16,94 +16,57 @@ namespace ProjectAPI.Controllers
         private readonly ILogger<WeatherForecastController> _logger;
         private readonly ICreateWeatherForecast _createWeatherForecast;
         //create a list of weather forecasts
-        public static List<WeatherForecast> _forecasts = new List<WeatherForecast>();  
-        public WeatherForecastController(ILogger<WeatherForecastController> logger,ICreateWeatherForecast create)
+        public static List<WeatherForecastDomainModel> _forecasts = new List<WeatherForecastDomainModel>(); 
+        private readonly IRepository<WeatherForecastDomainModel> _repo;
+        public WeatherForecastController(ILogger<WeatherForecastController> logger,
+            ICreateWeatherForecast create
+    
+            )
         {
-            _createWeatherForecast = create;
             _logger = logger;
+            _createWeatherForecast = create;
+            _repo = new Repository<WeatherForecastDomainModel>(new ProjectContext());
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        public IEnumerable<WeatherForecastDomainModel> Get()
         {
-            return _forecasts
-            .ToArray();
+            return _repo.GetAll();
         }
         [HttpGet("{id}")]
-        public WeatherForecast Get(int id)
+        public WeatherForecastDomainModel Get(int id)
         {
-            if(1!=_createWeatherForecast.Invoke(new WeatherForecast()))
-            {
-                Console.WriteLine("Error");
-            }
-            try
-            {
-                if (_forecasts[id] != null)
-                {
-                    Response.StatusCode = 200;
-                    return _forecasts[id];
-                }else
-                {
-                    Response.StatusCode = 404;
-                    return null;
-                }
-            } catch (ArgumentOutOfRangeException)
-            {
-                Response.StatusCode = 404;
-                return null;
-            }
+           return _repo.Get(id);
            
         }
-        [HttpGet("/test")]
-        public IEnumerable<WeatherForecast> Get(string test)
-        {
-            DateTime date = DateTime.Now;
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = date,
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
-
-        }
+        
         [HttpPost]
-        public ActionResult<WeatherForecast> Post([FromBody] WeatherForecast forecast)
+        public ActionResult<WeatherForecastDomainModel> Post([FromBody] WeatherForecastDomainModel forecast)
         {
-            forecast.Id = _forecasts.Count;
-            _forecasts.Add(forecast);
-            return CreatedAtAction(nameof(Get), new { id = forecast.Id }, forecast);
+            _createWeatherForecast.Invoke(forecast);
+            return CreatedAtAction(nameof(Get),forecast);
+
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] WeatherForecast forecast)
+        public IActionResult Put(int id, [FromBody] WeatherForecastDomainModel forecast)
         {
-            // Add your logic to update the forecast
-            // For example, _repository.Update(id, forecast);
-            try
-            {
-                _forecasts[id]=forecast;
-                return Ok(forecast);
-            } catch (ArgumentOutOfRangeException)
-            {
-                return NotFound();
-            }
+            _repo.Update(forecast);
+            return NoContent();
+            
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            // Add your logic to delete the forecast
-            // For example, _repository.Delete(id);
-            try
-            {
-                _forecasts[id]=null;
-                return Ok();
-            } catch (ArgumentOutOfRangeException)
+            var forecast = _repo.Get(id);
+            if (forecast == null)
             {
                 return NotFound();
             }
+            _repo.Delete(forecast);
+            return NoContent();
+          
         }
     }
 }

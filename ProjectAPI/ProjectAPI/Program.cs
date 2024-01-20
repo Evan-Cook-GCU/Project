@@ -23,7 +23,10 @@ static void getUsers()
     static void addUsers()
     {
         using var context = new ProjectContext();
-        var user = new User();
+        var user = new UserModel();
+        user.Name = "test@gmail.com";
+        user.Password = "test";
+        user.Email = "test@gmail.com";
         context.Users.Add(user);
         context.SaveChanges();
     }
@@ -38,6 +41,7 @@ static void getUsers()
         using(ProjectContext context = new ProjectContext())
         {
             context.Database.EnsureDeleted();
+            Thread.Sleep(1000);
             context.Database.EnsureCreated();
         }
         getUsers();
@@ -61,6 +65,7 @@ static void getUsers()
         });
         WebBuilder.Services.AddEndpointsApiExplorer();
         WebBuilder.Services.AddSwaggerGen();
+        //ConfigureDatabase(WebBuilder.Services);
         ConfigureAutofac();
         var app = WebBuilder.Build();
 
@@ -89,10 +94,15 @@ static void getUsers()
         {
             container.RegisterType<WeatherForecastController>().PropertiesAutowired();
             container.RegisterType<CreateWeatherForecast>().As<ICreateWeatherForecast>().PropertiesAutowired();
+            container.RegisterType<Repository<WeatherForecastDomainModel>>().As<IRepository<WeatherForecastDomainModel>>().PropertiesAutowired();
+            container.RegisterType<Repository<UserModel>>().As<IRepository<UserModel>>().PropertiesAutowired();
+            container.RegisterType<UsersController>().PropertiesAutowired();
+            container.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerLifetimeScope();
         });
     }
     private static void ConfigureDatabase(IServiceCollection services)
     {
         services.AddDbContext<ProjectContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+        //services.AddDbContext<ProjectContext>();
     }
 }

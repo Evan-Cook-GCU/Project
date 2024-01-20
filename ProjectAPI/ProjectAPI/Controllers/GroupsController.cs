@@ -9,62 +9,80 @@ namespace ProjectAPI.Controllers
     [ApiController]
     public class GroupsController : ControllerBase
     {
-        private readonly List<Group> _groups;
+        
 
         public GroupsController()
         {
-            _groups = new List<Group>();
+            
         }
 
         // GET: api/Groups
         [HttpGet]
-        public ActionResult<IEnumerable<Group>> GetGroups()
+        public ActionResult<IEnumerable<GroupModel>> GetGroups()
         {
-            return _groups;
+            using (var context = new ProjectContext())
+            {
+                var groups = context.Groups.ToList();
+                return Ok(groups);
+            }
         }
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
-        public ActionResult<Group> GetGroup(int id)
+        public ActionResult<GroupModel> GetGroup(int id)
         {
-            var group = _groups.FirstOrDefault(g => g.Id == id);
-
-            if (group == null)
+            using (var context = new ProjectContext())
             {
-                return NotFound();
+                var group = context.Groups.FirstOrDefault(g => g.Id == id);
+                if (group == null)
+                {
+                    return NotFound();
+                }
+                return Ok(group);
             }
-
-            return group;
         }
 
         // POST: api/Groups
         [HttpPost]
-        public void PostGroup([FromBody] Group group)
+        public void PostGroup([FromBody] GroupModel group)
         {
-            _groups.Add(group);
+            using (var context = new ProjectContext())
+            {
+                context.Groups.Add(group);
+                context.SaveChanges();
+            }
         }
 
         // PUT: api/Groups/5
         [HttpPut("{id}")]
-        public void PutGroup(int id, [FromBody] Group group)
+        public void PutGroup(int id, [FromBody] GroupModel group)
         {
-            var existingGroup = _groups.FirstOrDefault(g => g.Id == id);
-            if (existingGroup != null)
+            using (var context = new ProjectContext())
             {
-                existingGroup.Name = group.Name;
-                existingGroup.Description = group.Description;
-                existingGroup.DisplayName = group.DisplayName;
-                existingGroup.Users = group.Users;
-                existingGroup.Rating = group.Rating;
+                var existingGroup = context.Groups.FirstOrDefault(g => g.Id == id);
+                if (existingGroup != null)
+                {
+                    existingGroup.Name = group.Name;
+                    existingGroup.Description = group.Description;
+                    existingGroup.DisplayName = group.DisplayName;
+                    existingGroup.Users = group.Users;
+                    existingGroup.Rating = group.Rating;
+                    context.SaveChanges();
+                }
             }
+            
         }
 
         // DELETE: api/Groups/5
         [HttpDelete("{id}")]
         public void DeleteGroup(int id)
         {
-            var group = _groups.FirstOrDefault(g => g.Id == id);
-            _groups.Remove(group);
+            using (var context = new ProjectContext())
+            {
+                var group = context.Groups.FirstOrDefault(g => g.Id == id);
+                context.Groups.Remove(group);
+                context.SaveChanges();
+            }
         }
     }
 }

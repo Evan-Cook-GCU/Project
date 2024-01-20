@@ -27,7 +27,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Context\Database Context\" />
+    <Folder Include="Context\Repository\" />
+    <Folder Include="services\WeatherForecast\Get\" />
+    <Folder Include="services\WeatherForecast\Delete\" />
+    <Folder Include="services\WeatherForecast\Update\" />
   </ItemGroup>
 
 </Project>

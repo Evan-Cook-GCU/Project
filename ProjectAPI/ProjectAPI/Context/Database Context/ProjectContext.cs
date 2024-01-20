@@ -8,6 +8,7 @@ public class ProjectContext : DbContext
     { 
         
     }*/
+    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
@@ -17,11 +18,16 @@ public class ProjectContext : DbContext
         }
     }
     // Define DbSets for domain models here
-    public DbSet<WeatherForecast> WeatherForecasts { get; set; }
-    public DbSet<User> Users { get; set; }
-    public DbSet<Group> Groups { get; set; }
-    public DbSet<Grid> Grids { get; set; }
-    public DbSet<GridElement> GridElement { get; set; }
+    public DbSet<WeatherForecastDomainModel> WeatherForecasts { get; set; }
+    public DbSet<UserModel> Users { get; set; }
+    public DbSet<ImageModel> Images { get; set; }
+    public DbSet<GroupModel> Groups { get; set; }
+    public DbSet<GridModel> Grids { get; set; }
+    public DbSet<GridElementModel> GridElement { get; set; }
+    public DbSet<MetricModel> Metrics { get; set; }
+    public DbSet<Message> Messages { get; set; }
+    public DbSet<DataModel> Data { get; set; }
+
 
 
 }

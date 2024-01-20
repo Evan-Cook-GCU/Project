@@ -9,23 +9,23 @@ namespace ProjectAPI.Controllers
     [ApiController]
     public class GridController : ControllerBase
     {
-        private readonly List<Grid> _grids;
+        private readonly List<GridModel> _grids;
 
         public GridController()
         {
-            _grids = new List<Grid>();
+            _grids = new List<GridModel>();
         }
 
         // GET: api/Grid
         [HttpGet]
-        public ActionResult<IEnumerable<Grid>> GetGrids()
+        public ActionResult<IEnumerable<GridModel>> GetGrids()
         {
             return _grids;
         }
 
         // GET: api/Grid/5
         [HttpGet("{id}")]
-        public ActionResult<Grid> GetGrid(int id)
+        public ActionResult<GridModel> GetGrid(int id)
         {
             var grid = _grids.FirstOrDefault(g => g.Id == id);
 
@@ -39,21 +39,21 @@ namespace ProjectAPI.Controllers
 
         // POST: api/Grid
         [HttpPost]
-        public void PostGrid([FromBody] Grid grid)
+        public void PostGrid([FromBody] GridModel grid)
         {
             _grids.Add(grid);
         }
 
         // PUT: api/Grid/5
         [HttpPut("{id}")]
-        public void PutGrid(int id, [FromBody] Grid grid)
+        public void PutGrid(int id, [FromBody] GridModel grid)
         {
             var existingGrid = _grids.FirstOrDefault(g => g.Id == id);
             if (existingGrid != null)
             {
-                existingGrid.Name = grid.Name;
+                existingGrid.DisplayName = grid.DisplayName;
                 existingGrid.GridElements = grid.GridElements;
-                existingGrid.groupId = grid.groupId;
+                existingGrid.GroupDomainModelId = grid.GroupDomainModelId;
             }
         }
 

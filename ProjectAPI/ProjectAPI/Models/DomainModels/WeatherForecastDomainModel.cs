@@ -1,6 +1,6 @@
 namespace ProjectAPI.Models.DomainModels
 {
-    public class WeatherForecast
+    public class WeatherForecastDomainModel
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }

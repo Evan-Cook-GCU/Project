@@ -1,10 +1,21 @@
-﻿namespace ProjectAPI.services.WeatherForecast.Create
+﻿using ProjectAPI.Models.DomainModels;
+
+namespace ProjectAPI.services.WeatherForecast.Create
 {
     public class CreateWeatherForecast : ICreateWeatherForecast
     {
-        public int Invoke(Models.DomainModels.WeatherForecast model)
+        private readonly IRepository<WeatherForecastDomainModel> _repo;
+        //constructor
+        public CreateWeatherForecast()
         {
-            return 1;
+            
+        }
+        public int Invoke(WeatherForecastDomainModel model)
+        {
+            using var context = new ProjectContext();
+            context.WeatherForecasts.Add(model);
+            context.SaveChanges();
+            return model.Id;
         }
     }
 }
